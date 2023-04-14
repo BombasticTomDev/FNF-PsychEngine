@@ -74,7 +74,7 @@ class ModOptionSelectState extends MusicBeatState
 		{
 			var optionText:Alphabet = new Alphabet(0, 0, mods[i], true);
 			optionText.screenCenter();
-			optionText.y += (80 * i) + 50;
+			optionText.y += (80 * (i - grpOptions.length / 2)) + 50;
 
 			optionText.isMenuItem = true;
 			optionText.targetY = i;
