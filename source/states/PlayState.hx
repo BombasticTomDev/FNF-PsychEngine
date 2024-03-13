@@ -2205,25 +2205,35 @@ class PlayState extends MusicBeatState
 		callOnScripts('onEvent', [eventName, value1, value2, strumTime]);
 	}
 
+	var prevCharFocus:String;
 	function moveCameraSection(?sec:Null<Int>):Void {
-		if(sec == null) sec = curSection;
-		if(sec < 0) sec = 0;
+		if(sec == null)
+			sec = curSection;
 
-		if(SONG.notes[sec] == null) return;
+		var section:SwagSection = SONG.notes[(sec > 0) ? sec : 0]; // Math.max returns a Float :P
+		if(section == null)
+			return;
 
-		if (gf != null && SONG.notes[sec].gfSection)
+		var mustHit:Bool = section.mustHitSection;
+		var secCharacter:String;
+
+		if (gf != null && section.gfSection)
 		{
+			secCharacter = "gf";
 			camFollow.setPosition(gf.getMidpoint().x, gf.getMidpoint().y);
 			camFollow.x += gf.cameraPosition[0] + girlfriendCameraOffset[0];
 			camFollow.y += gf.cameraPosition[1] + girlfriendCameraOffset[1];
 			tweenCamIn();
-			callOnScripts('onMoveCamera', ['gf']);
-			return;
+		}
+		else
+		{
+			secCharacter = mustHit ? "boyfriend" : "dad";
+			moveCamera(!mustHit);
 		}
 
-		var isDad:Bool = (SONG.notes[sec].mustHitSection != true);
-		moveCamera(isDad);
-		callOnScripts('onMoveCamera', [isDad ? 'dad' : 'boyfriend']);
+		if (prevCharFocus != secCharacter)
+			callOnScripts("onMoveCamera", [secCharacter]);
+		prevCharFocus = secCharacter;
 	}
 
 	var cameraTwn:FlxTween;
